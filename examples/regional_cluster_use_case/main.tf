@@ -27,8 +27,13 @@ module "custom_service_account" {
 module "custom_network" {
   source = "git@github.com:padok-team/terraform-google-network.git"
 
-  name    = "my-super-duper-cluster-network"
-  subnets = {}
+  name = "my-super-duper-cluster-network"
+  subnets = {
+    "kubernetes-nodes" = {
+      cidr   = "10.21.0.0/16"
+      region = "europe-west1"
+    }
+  }
 }
 
 module "regional_cluster_use_case" {
@@ -37,11 +42,26 @@ module "regional_cluster_use_case" {
   name     = "my-regional-cluster"
   location = "europe-west1"
 
-  node_service_account = {
-    email = module.custom_service_account.service_account_email["gke-sa"]
-  }
+  # node_service_account = {
+  #   email = module.custom_service_account.service_account_email["gke-sa"]
+  # }
+
   cidr_master = "10.168.0.0/28"
   network = {
     id = "projects/padok-cloud-factory/global/networks/${module.custom_network.network.name}"
   }
+  subnetwork = module.custom_network.network.subnets["kubernetes-nodes"] # Reference the subnet created above
+
+  node_pools = {
+    "classy-node-pool" = {
+      min_size     = 1
+      max_size     = 2
+      machine_type = "e2-micro"
+      preemptible  = true
+    }
+  }
+}
+
+output "service_account_output" {
+  value = module.custom_service_account.service_account_email["gke-sa"]
 }

@@ -36,6 +36,7 @@ variable "node_service_account" {
     email = string
   })
   description = "The service account to use for your node identities."
+  default     = { email = null }
 }
 
 variable "node_pools" {
@@ -60,7 +61,14 @@ variable "node_locations" {
 }
 
 variable "network" {
-  description = "The virtual network the cluster's nodes should be connected to"
+  description = "The virtual network the cluster's nodes will be connected to"
+  type = object({
+    id = string
+  })
+}
+
+variable "subnetwork" {
+  description = "The subnetwork the cluster's nodes will be connected to"
   type = object({
     id = string
   })
@@ -69,6 +77,7 @@ variable "network" {
 variable "cidr_master" {
   type        = string
   description = "The cidr of the subnet ip range to use for the control plane"
+  default     = null
 
   validation {
     condition     = can(regex("(^192\\.168\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])$)|(^172\\.([1][6-9]|[2][0-9]|[3][0-1])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])$)|(^10\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])[\\/](([0-9]|[1-2][0-9]|3[0-2]))+$)", var.cidr_master)) || var.cidr_master == null

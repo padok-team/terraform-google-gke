@@ -34,9 +34,10 @@ resource "google_container_cluster" "this" {
 
   enable_shielded_nodes = true
   node_config {
-    shielded_instance_config {
-      enable_secure_boot = true
-    }
+    service_account = var.node_service_account.email
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform"
+    ]
   }
 
   # This enables workload identity. For more information:
@@ -46,6 +47,7 @@ resource "google_container_cluster" "this" {
   }
 
   network         = var.network.id
+  subnetwork      = var.subnetwork.id
   networking_mode = "VPC_NATIVE"
   ip_allocation_policy {
     cluster_ipv4_cidr_block  = var.cidr_pods
@@ -108,6 +110,9 @@ resource "google_container_node_pool" "this" {
       node_metadata = "GKE_METADATA_SERVER"
     }
 
+    shielded_instance_config {
+      enable_secure_boot = true
+    }
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
     service_account = var.node_service_account.email
     oauth_scopes = [
