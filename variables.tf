@@ -25,6 +25,15 @@ variable "private_endpoint" {
   default     = false
 }
 
+variable "ip_whitelist_master_network" {
+  type = list(object({
+    name = string
+    cidr = string
+  }))
+  default     = null
+  description = "IP or CIDR whitelisted to access master kkubernetes"
+}
+
 variable "enable_dataplane_v2" {
   type        = bool
   description = "Whether to enable Dataplane V2 or not"

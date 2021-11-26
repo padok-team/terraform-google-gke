@@ -72,6 +72,16 @@ resource "google_container_cluster" "this" {
     master_ipv4_cidr_block  = var.cidr_master
   }
 
+  master_authorized_networks_config {
+    dynamic "cidr_blocks" {
+      for_each = var.ip_whitelist_master_network
+      content {
+        cidr_block   = cidr_blocks["cidr"]
+        display_name = cidr_blocks["name"]
+      }
+    }
+  }
+
   addons_config {
     http_load_balancing {
       # Waiting for NEGs to be ready makes Argo think some applications are not

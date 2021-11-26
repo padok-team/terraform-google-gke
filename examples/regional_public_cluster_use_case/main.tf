@@ -42,13 +42,13 @@ module "regional_cluster_use_case" {
   name     = "my-regional-cluster"
   location = "europe-west1"
 
-  # node_service_account = {
-  #   email = module.custom_service_account.service_account_email["gke-sa"]
-  # }
+  node_service_account = {
+    email = module.custom_service_account.service_account_email["gke-sa"]
+  }
 
   cidr_master = "10.168.0.0/28"
   network = {
-    id = "projects/padok-cloud-factory/global/networks/${module.custom_network.network.name}"
+    id = "projects/padok-playground/global/networks/${module.custom_network.network.name}"
   }
   subnetwork = module.custom_network.network.subnets["kubernetes-nodes"] # Reference the subnet created above
 
