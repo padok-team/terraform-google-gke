@@ -51,10 +51,8 @@ module "zonal_cluster_use_case" {
   ]
 
   cidr_master = "10.168.1.0/28"
-  network = {
-    id = "projects/padok-playground/global/networks/${module.custom_network.network.name}"
-  }
-  subnetwork = module.custom_network.network.subnets["zonal-kubernetes-nodes"] # Reference the subnet created above
+  network     = module.custom_network.network
+  subnetwork  = module.custom_network.network.subnets["zonal-kubernetes-nodes"] # Reference the subnet created above
 
   node_pools = {
     "first-zonal-node-pool" = {
