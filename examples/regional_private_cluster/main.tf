@@ -1,7 +1,7 @@
 # Short description of the use case in comments
 
 provider "google" {
-  project = "padok-cloud-factory"
+  project = "padok-playground"
   region  = "europe-west1"
 }
 
@@ -64,4 +64,8 @@ module "regional_cluster_use_case" {
 
 output "service_account_output" {
   value = module.custom_service_account.service_account_email["gke-sa"]
+}
+
+output "kubernetes_cluster" {
+  value = module.regional_cluster_use_case.kubernetes_cluster
 }
