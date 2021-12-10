@@ -11,10 +11,10 @@ variable "location" {
 variable "min_master_version" {
   description = "Minimum version for GKE control plane"
   type        = string
-  default     = "1.20.10"
+  default     = "1.20"
 
   validation {
-    condition     = can(regex("^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}.*$", var.min_master_version))
+    condition     = can(regex("^[0-9]{1,3}\\.[0-9]{1,3}.*$", var.min_master_version))
     error_message = "Please set valid version. 'latest' is not accepted. See https://cloud.google.com/kubernetes-engine/versioning#specifying_cluster_version."
   }
 }
@@ -30,8 +30,8 @@ variable "ip_whitelist_master_network" {
     name = string
     cidr = string
   }))
-  default     = null
-  description = "IP or CIDR whitelisted to access master kkubernetes"
+  default     = []
+  description = "IP or CIDR whitelisted to access master kubernetes"
 }
 
 variable "enable_dataplane_v2" {

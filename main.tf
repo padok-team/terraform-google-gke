@@ -76,8 +76,8 @@ resource "google_container_cluster" "this" {
     dynamic "cidr_blocks" {
       for_each = var.ip_whitelist_master_network
       content {
-        cidr_block   = cidr_blocks["cidr"]
-        display_name = cidr_blocks["name"]
+        cidr_block   = cidr_blocks.value.cidr
+        display_name = cidr_blocks.value.name
       }
     }
   }
@@ -97,8 +97,9 @@ resource "google_container_node_pool" "this" {
 
   name = each.key
 
-  location = google_container_cluster.this.location
-  cluster  = google_container_cluster.this.name
+  location       = google_container_cluster.this.location
+  cluster        = google_container_cluster.this.name
+  node_locations = var.node_locations
 
   initial_node_count = each.value.min_size
 
