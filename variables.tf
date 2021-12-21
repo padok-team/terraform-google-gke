@@ -20,31 +20,31 @@ variable "min_master_version" {
 }
 
 variable "private_endpoint" {
-  type        = bool
   description = "Whether the kubernetes master endpoint should be private or not"
+  type        = bool
   default     = false
 }
 
 variable "ip_whitelist_master_network" {
+  description = "IP or CIDR whitelisted to access master kubernetes"
   type = list(object({
     name = string
     cidr = string
   }))
   default     = []
-  description = "IP or CIDR whitelisted to access master kubernetes"
 }
 
 variable "enable_dataplane_v2" {
-  type        = bool
   description = "Whether to enable Dataplane V2 or not"
+  type        = bool
   default     = true
 }
 
 variable "node_service_account" {
+  description = "The service account to use for your node identities."
   type = object({
     email = string
   })
-  description = "The service account to use for your node identities."
   default     = { email = null }
 }
 
@@ -64,8 +64,8 @@ variable "node_pools" {
 }
 
 variable "node_locations" {
-  type        = list(string)
   description = "The zones in which your cluster's nodes are located"
+  type        = list(string)
   default     = null
 }
 
@@ -84,8 +84,8 @@ variable "subnetwork" {
 }
 
 variable "cidr_master" {
-  type        = string
   description = "The cidr of the subnet ip range to use for the control plane"
+  type        = string
   default     = null
 
   validation {
@@ -94,8 +94,8 @@ variable "cidr_master" {
   }
 }
 variable "cidr_pods" {
-  type        = string
   description = "The cidr block of the subnet ip range to use for pods"
+  type        = string
   default     = null
 
   validation {
@@ -105,8 +105,8 @@ variable "cidr_pods" {
 }
 
 variable "cidr_services" {
-  type        = string
   description = "The cidr of the subnet ip range to use for services"
+  type        = string
   default     = null
 
   validation {
@@ -117,8 +117,8 @@ variable "cidr_services" {
 
 
 variable "firewall_webhook_ports" {
-  type        = list(string)
   description = "Ports to open to allow GKE master nodes to connect to admission controllers/webhooks"
+  type        = list(string)
   default     = []
 
   validation {
