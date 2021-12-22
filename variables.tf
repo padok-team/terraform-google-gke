@@ -4,12 +4,12 @@ variable "name" {
 }
 
 variable "location" {
-  description = "Zone or region to deploy the cluster to"
+  description = "Zone or region to deploy the cluster to."
   type        = string
 }
 
 variable "min_master_version" {
-  description = "Minimum version for GKE control plane"
+  description = "Minimum version for GKE control plane."
   type        = string
   default     = "1.20"
 
@@ -20,13 +20,13 @@ variable "min_master_version" {
 }
 
 variable "private_endpoint" {
-  description = "Whether the kubernetes master endpoint should be private or not"
+  description = "Whether the kubernetes master endpoint should be private or not."
   type        = bool
   default     = false
 }
 
 variable "ip_whitelist_master_network" {
-  description = "IP or CIDR whitelisted to access master kubernetes"
+  description = "IP or CIDR whitelisted to access master kubernetes."
   type = list(object({
     name = string
     cidr = string
@@ -35,7 +35,7 @@ variable "ip_whitelist_master_network" {
 }
 
 variable "enable_dataplane_v2" {
-  description = "Whether to enable Dataplane V2 or not"
+  description = "Whether to enable Dataplane V2 or not."
   type        = bool
   default     = true
 }
@@ -64,27 +64,27 @@ variable "node_pools" {
 }
 
 variable "node_locations" {
-  description = "The zones in which your cluster's nodes are located"
+  description = "The zones in which your cluster's nodes are located."
   type        = list(string)
   default     = null
 }
 
 variable "network" {
-  description = "The virtual network the cluster's nodes will be connected to"
+  description = "The virtual network the cluster's nodes will be connected to."
   type = object({
     id = string
   })
 }
 
 variable "subnetwork" {
-  description = "The subnetwork the cluster's nodes will be connected to"
+  description = "The subnetwork the cluster's nodes will be connected to."
   type = object({
     id = string
   })
 }
 
 variable "cidr_master" {
-  description = "The cidr of the subnet ip range to use for the control plane"
+  description = "The CIDR of the subnet ip range to use for the control plane."
   type        = string
   default     = null
 
@@ -94,7 +94,7 @@ variable "cidr_master" {
   }
 }
 variable "cidr_pods" {
-  description = "The cidr block of the subnet ip range to use for pods"
+  description = "The CIDR block of the subnet ip range to use for pods."
   type        = string
   default     = null
 
@@ -117,7 +117,7 @@ variable "cidr_services" {
 
 
 variable "firewall_webhook_ports" {
-  description = "Ports to open to allow GKE master nodes to connect to admission controllers/webhooks"
+  description = "Ports to open to allow GKE master nodes to connect to admission controllers/webhooks."
   type        = list(string)
   default     = []
 

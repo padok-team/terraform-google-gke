@@ -1,7 +1,7 @@
 # Short description of the use case in comments
 
 provider "google" {
-  project = "padok-playground"
+  project = "<YOUR_PROJECT_ID>"
   region  = "europe-west1"
 }
 
@@ -26,7 +26,7 @@ module "custom_service_account" {
 
 module "custom_network" {
   source = "git@github.com:padok-team/terraform-google-network.git"
-
+  project = "<YOUR_PROJECT_ID>"
   name = "my-super-duper-cluster-network"
   subnets = {
     "kubernetes-nodes" = {
