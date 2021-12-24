@@ -34,9 +34,10 @@ resource "google_container_cluster" "this" {
 
   enable_shielded_nodes = true
   node_config {
-    shielded_instance_config {
-      enable_secure_boot = true
-    }
+    service_account = var.node_service_account.email
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform"
+    ]
   }
 
   # This enables workload identity. For more information:
@@ -46,6 +47,7 @@ resource "google_container_cluster" "this" {
   }
 
   network         = var.network.id
+  subnetwork      = var.subnetwork.id
   networking_mode = "VPC_NATIVE"
   ip_allocation_policy {
     cluster_ipv4_cidr_block  = var.cidr_pods
@@ -70,6 +72,16 @@ resource "google_container_cluster" "this" {
     master_ipv4_cidr_block  = var.cidr_master
   }
 
+  master_authorized_networks_config {
+    dynamic "cidr_blocks" {
+      for_each = var.ip_whitelist_master_network
+      content {
+        cidr_block   = cidr_blocks.value.cidr
+        display_name = cidr_blocks.value.name
+      }
+    }
+  }
+
   addons_config {
     http_load_balancing {
       # Waiting for NEGs to be ready makes Argo think some applications are not
@@ -85,8 +97,9 @@ resource "google_container_node_pool" "this" {
 
   name = each.key
 
-  location = google_container_cluster.this.location
-  cluster  = google_container_cluster.this.name
+  location       = google_container_cluster.this.location
+  cluster        = google_container_cluster.this.name
+  node_locations = var.node_locations
 
   initial_node_count = each.value.min_size
 
@@ -108,6 +121,9 @@ resource "google_container_node_pool" "this" {
       node_metadata = "GKE_METADATA_SERVER"
     }
 
+    shielded_instance_config {
+      enable_secure_boot = true
+    }
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
     service_account = var.node_service_account.email
     oauth_scopes = [

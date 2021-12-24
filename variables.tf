@@ -4,38 +4,48 @@ variable "name" {
 }
 
 variable "location" {
-  description = "Zone or region to deploy the cluster to"
+  description = "Zone or region to deploy the cluster to."
   type        = string
 }
 
 variable "min_master_version" {
-  description = "Minimum version for GKE control plane"
+  description = "Minimum version for GKE control plane."
   type        = string
-  default     = "1.20.10"
+  default     = "1.20"
 
   validation {
-    condition     = can(regex("^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}.*$", var.min_master_version))
+    condition     = can(regex("^[0-9]{1,3}\\.[0-9]{1,3}.*$", var.min_master_version))
     error_message = "Please set valid version. 'latest' is not accepted. See https://cloud.google.com/kubernetes-engine/versioning#specifying_cluster_version."
   }
 }
 
 variable "private_endpoint" {
+  description = "Whether the kubernetes master endpoint should be private or not."
   type        = bool
-  description = "Whether the kubernetes master endpoint should be private or not"
   default     = false
 }
 
+variable "ip_whitelist_master_network" {
+  description = "IP or CIDR whitelisted to access master kubernetes."
+  type = list(object({
+    name = string
+    cidr = string
+  }))
+  default     = []
+}
+
 variable "enable_dataplane_v2" {
+  description = "Whether to enable Dataplane V2 or not."
   type        = bool
-  description = "Whether to enable Dataplane V2 or not"
   default     = true
 }
 
 variable "node_service_account" {
+  description = "The service account to use for your node identities."
   type = object({
     email = string
   })
-  description = "The service account to use for your node identities."
+  default     = { email = null }
 }
 
 variable "node_pools" {
@@ -54,21 +64,29 @@ variable "node_pools" {
 }
 
 variable "node_locations" {
+  description = "The zones in which your cluster's nodes are located."
   type        = list(string)
-  description = "The zones in which your cluster's nodes are located"
   default     = null
 }
 
 variable "network" {
-  description = "The virtual network the cluster's nodes should be connected to"
+  description = "The virtual network the cluster's nodes will be connected to."
+  type = object({
+    id = string
+  })
+}
+
+variable "subnetwork" {
+  description = "The subnetwork the cluster's nodes will be connected to."
   type = object({
     id = string
   })
 }
 
 variable "cidr_master" {
+  description = "The CIDR of the subnet ip range to use for the control plane."
   type        = string
-  description = "The cidr of the subnet ip range to use for the control plane"
+  default     = null
 
   validation {
     condition     = can(regex("(^192\\.168\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])$)|(^172\\.([1][6-9]|[2][0-9]|[3][0-1])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])$)|(^10\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])[\\/](([0-9]|[1-2][0-9]|3[0-2]))+$)", var.cidr_master)) || var.cidr_master == null
@@ -76,8 +94,8 @@ variable "cidr_master" {
   }
 }
 variable "cidr_pods" {
+  description = "The CIDR block of the subnet ip range to use for pods."
   type        = string
-  description = "The cidr block of the subnet ip range to use for pods"
   default     = null
 
   validation {
@@ -87,8 +105,8 @@ variable "cidr_pods" {
 }
 
 variable "cidr_services" {
-  type        = string
   description = "The cidr of the subnet ip range to use for services"
+  type        = string
   default     = null
 
   validation {
@@ -99,8 +117,8 @@ variable "cidr_services" {
 
 
 variable "firewall_webhook_ports" {
+  description = "Ports to open to allow GKE master nodes to connect to admission controllers/webhooks."
   type        = list(string)
-  description = "Ports to open to allow GKE master nodes to connect to admission controllers/webhooks"
   default     = []
 
   validation {
