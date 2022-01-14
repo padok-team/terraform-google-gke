@@ -64,7 +64,7 @@ output "service_account_output" {
   value = module.custom_service_account.service_account_email["gke-sa"]
 }
 
-output "kubernetes_cluster" {
-  value = module.regional_cluster_use_case.kubernetes_cluster
+output "this" {
+  value = module.regional_cluster_use_case.this
 
 }

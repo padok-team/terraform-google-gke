@@ -45,7 +45,7 @@ module "zonal_cluster_use_case" {
   node_service_account = {
     email = module.custom_service_account.service_account_email["gke-zonal-test-sa"]
   }
-  ip_whitelist_master_network = [
+  ips_whitelist_master_network = [
     { "name" = "pierrea", "cidr" = "31.32.227.74/32" },
     { "name" = "kims", "cidr" = "82.216.204.48/32" }
   ]
@@ -74,7 +74,7 @@ output "service_account_output" {
   value = module.custom_service_account.service_account_email["gke-zonal-test-sa"]
 }
 
-output "kubernetes_cluster" {
-  value     = module.zonal_cluster_use_case.kubernetes_cluster
+output "this" {
+  value     = module.zonal_cluster_use_case.this
   sensitive = true
 }

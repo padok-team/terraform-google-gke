@@ -1,10 +1,3 @@
-# Here you can reference 2 type of terraform objects :
-# 1. Ressources from you provider of choice
-# 2. Modules from official repositories which include modules from the following github organizations
-#     - AWS: https://github.com/terraform-aws-modules
-#     - GCP: https://github.com/terraform-google-modules
-#     - Azure: https://github.com/Azure
-
 data "google_project" "this" {}
 
 resource "google_container_cluster" "this" {
@@ -50,8 +43,8 @@ resource "google_container_cluster" "this" {
   subnetwork      = var.subnetwork.id
   networking_mode = "VPC_NATIVE"
   ip_allocation_policy {
-    cluster_ipv4_cidr_block  = var.cidr_pods
-    services_ipv4_cidr_block = var.cidr_services
+    cluster_ipv4_cidr_block  = var.pods_cidr
+    services_ipv4_cidr_block = var.services_cidr
   }
 
   network_policy {
@@ -74,7 +67,7 @@ resource "google_container_cluster" "this" {
 
   master_authorized_networks_config {
     dynamic "cidr_blocks" {
-      for_each = var.ip_whitelist_master_network
+      for_each = var.ips_whitelist_master_network
       content {
         cidr_block   = cidr_blocks.value.cidr
         display_name = cidr_blocks.value.name
