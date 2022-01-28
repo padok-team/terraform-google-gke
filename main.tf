@@ -140,3 +140,23 @@ resource "google_compute_firewall" "allow_webhooks" {
     ], var.firewall_webhook_ports))
   }
 }
+
+resource "google_compute_global_address" "this" {
+  for_each = {
+    for k, v in var.ip_addresses : k => v
+    if v["global"]
+  }
+  name         = each.key
+  address_type = each.value.external ? "EXTERNAL" : "INTERNAL"
+  network      = var.network.id
+}
+
+resource "google_compute_address" "this" {
+  for_each = {
+    for k, v in var.ip_addresses : k => v
+    if !v["global"]
+  }
+  name         = each.key
+  address_type = each.value.external ? "EXTERNAL" : "INTERNAL"
+  network      = var.network.id
+}

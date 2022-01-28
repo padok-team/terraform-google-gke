@@ -9,8 +9,8 @@ module "custom_service_account" {
   source = "git@github.com:padok-team/terraform-google-serviceaccount.git"
 
   list_serviceaccount = {
-    gke-zonal-test-sa = {
-      predifined_roles = ["roles/compute.admin", "roles/container.admin"]
+    gke-sa = {
+      predifined_roles = []
       permissions = [
         "container.clusters.create",
         "container.clusters.delete",
@@ -27,54 +27,63 @@ module "custom_service_account" {
 module "custom_network" {
   source = "git@github.com:padok-team/terraform-google-network.git"
   project = "<YOUR_PROJECT_ID>"
-  name = "my-zonal-super-duper-cluster-network"
+  name = "my-super-duper-cluster-network"
   subnets = {
-    "zonal-kubernetes-nodes" = {
+    "kubernetes-nodes" = {
       cidr   = "10.21.0.0/16"
       region = "europe-west1"
     }
   }
 }
 
-module "zonal_cluster_use_case" {
+module "ip_address_use_case" {
   source = "../.."
 
-  name     = "my-zonal-cluster"
-  location = "europe-west1-b"
+  name     = "cluster-with-ip-address"
+  location = "europe-west1"
 
   node_service_account = {
-    email = module.custom_service_account.service_account_email["gke-zonal-test-sa"]
+    email = module.custom_service_account.service_account_email["gke-sa"]
   }
-  ips_whitelist_master_network = [
-    { "name" = "pierrea", "cidr" = "31.32.227.74/32" },
-    { "name" = "kims", "cidr" = "82.216.204.48/32" }
-  ]
 
-  cidr_master = "10.168.1.0/28"
+  cidr_master = "10.168.0.0/28"
   network     = module.custom_network.compute_network
-  subnetwork  = module.custom_network.compute_network.subnets["zonal-kubernetes-nodes"] # Reference the subnet created above
+  subnetwork  = module.custom_network.compute_network.subnets["kubernetes-nodes"] # Reference the subnet created above
 
   node_pools = {
-    "first-zonal-node-pool" = {
+    "classy-node-pool" = {
       min_size     = 1
       max_size     = 2
       machine_type = "e2-micro"
       preemptible  = true
-    },
-    "second-zonal-node-pool" = {
-      min_size     = 1
-      max_size     = 3
-      machine_type = "e2-micro"
-      preemptible  = false
+    }
+  }
+
+  ip_addresses = {
+    "ip-address-1" = {
+      external = true
+      global   = false
+    }
+    "ip-address-2" = {
+      external = false
+      global   = true
     }
   }
 }
 
 output "service_account_output" {
-  value = module.custom_service_account.service_account_email["gke-zonal-test-sa"]
+  value = module.custom_service_account.service_account_email["gke-sa"]
 }
 
 output "this" {
-  value     = module.zonal_cluster_use_case.this
+  value = module.ip_address_use_case.this
   sensitive = true
+}
+
+output "ip_addresses" {
+  value = module.ip_address_use_case.ip_addresses
+}
+
+output "gloabl_ip_addresses" {
+  value = module.ip_address_use_case.global_ip_addresses
 }
