@@ -126,3 +126,12 @@ variable "firewall_webhook_ports" {
     error_message = "Please provide a list of valid ports."
   }
 }
+
+variable "ip_addresses" {
+  description = "Map of IP that you need to create (GLOBAL or NOT / EXTERNAL or NOT)."
+  type = map(object({
+    external = bool
+    global   = bool
+  }))
+  default = {}
+}

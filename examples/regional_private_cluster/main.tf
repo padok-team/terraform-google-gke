@@ -47,8 +47,8 @@ module "regional_cluster_use_case" {
   }
 
   cidr_master = "10.168.0.0/28"
-  network     = module.custom_network.network
-  subnetwork  = module.custom_network.network.subnets["kubernetes-nodes"] # Reference the subnet created above
+  network     = module.custom_network.compute_network
+  subnetwork  = module.custom_network.compute_network.subnets["kubernetes-nodes"] # Reference the subnet created above
 
   node_pools = {
     "classy-node-pool" = {
@@ -66,5 +66,5 @@ output "service_account_output" {
 
 output "this" {
   value = module.regional_cluster_use_case.this
-
+  sensitive = true
 }
