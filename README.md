@@ -12,6 +12,7 @@ Terraform module which creates **Google Kubernetes Engine** resources on **GCP**
 - AASRE I can deploy GKE cluster with a public control plane behind IP whitelisting
 - AASRE I can remove the default Node Pool
 - AASRE I can create my custom Node Pools
+- AASRE I can deploy a GKE cluster and creates some IPs (that I can later use for my LBs' IPs)
 
 ## Usage
 
@@ -30,6 +31,7 @@ module "google-gke-cluster" {
 
 - [Example of regional cluster with IP whitelisting on master and one custom node pool](examples/regional_private_cluster)
 - [Example of zonal cluster with two custom node pools](examples/zonal_multiple_node_pool)
+- [Example of cluster with one ip address and one global address ip](examples/cluster_with_ip_address)
 
 <!-- BEGIN_TF_DOCS -->
 ## Modules
@@ -47,6 +49,7 @@ No modules.
 | <a name="input_cidr_master"></a> [cidr\_master](#input\_cidr\_master) | The CIDR of the subnet ip range to use for the control plane. | `string` | `null` | no |
 | <a name="input_enable_dataplane_v2"></a> [enable\_dataplane\_v2](#input\_enable\_dataplane\_v2) | Whether to enable Dataplane V2 or not. | `bool` | `true` | no |
 | <a name="input_firewall_webhook_ports"></a> [firewall\_webhook\_ports](#input\_firewall\_webhook\_ports) | Ports to open to allow GKE master nodes to connect to admission controllers/webhooks. | `list(string)` | `[]` | no |
+| <a name="input_ip_addresses"></a> [ip\_addresses](#input\_ip\_addresses) | Map of all IPs you need to create (GLOBAL or NOT). | <pre>map(object({<br>    external = bool<br>    global   = bool<br>  }))</pre> | `{}` | no |
 | <a name="input_ips_whitelist_master_network"></a> [ips\_whitelist\_master\_network](#input\_ips\_whitelist\_master\_network) | IP or CIDR whitelisted to access master kubernetes. | <pre>list(object({<br>    name = string<br>    cidr = string<br>  }))</pre> | `[]` | no |
 | <a name="input_min_master_version"></a> [min\_master\_version](#input\_min\_master\_version) | Minimum version for GKE control plane. | `string` | `"1.20"` | no |
 | <a name="input_node_locations"></a> [node\_locations](#input\_node\_locations) | The zones in which your cluster's nodes are located. | `list(string)` | `null` | no |
@@ -60,5 +63,7 @@ No modules.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_global_ip_addresses"></a> [global\_ip\_addresses](#output\_global\_ip\_addresses) | n/a |
+| <a name="output_ip_addresses"></a> [ip\_addresses](#output\_ip\_addresses) | n/a |
 | <a name="output_this"></a> [this](#output\_this) | All outputs of the kubernetes cluster. |
 <!-- END_TF_DOCS -->
