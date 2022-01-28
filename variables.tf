@@ -128,7 +128,7 @@ variable "firewall_webhook_ports" {
 }
 
 variable "ip_addresses" {
-  description = "Map of all IPs you need to create (GLOBAL or NOT)."
+  description = "Map of IP that you need to create (GLOBAL or NOT / EXTERNAL or NOT)."
   type = map(object({
     external = bool
     global   = bool

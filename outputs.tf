@@ -4,10 +4,10 @@ output "this" {
   sensitive   = true
 }
 
-output "ip_addresses" {
+output "compute_addresses" {
   value = google_compute_address.this[*]
 }
 
-output "global_ip_addresses" {
+output "compute_global_addresses" {
   value = google_compute_global_address.this[*]
 }

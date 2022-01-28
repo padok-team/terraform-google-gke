@@ -68,7 +68,3 @@ output "this" {
   value = module.regional_cluster_use_case.this
   sensitive = true
 }
-
-output "ip_addresses" {
-  value = module.regional_cluster_use_case.ip_addresses
-}

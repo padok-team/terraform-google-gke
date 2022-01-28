@@ -81,9 +81,9 @@ output "this" {
 }
 
 output "ip_addresses" {
-  value = module.ip_address_use_case.ip_addresses
+  value = module.ip_address_use_case.compute_addresses
 }
 
 output "gloabl_ip_addresses" {
-  value = module.ip_address_use_case.global_ip_addresses
+  value = module.ip_address_use_case.compute_global_addresses
 }
