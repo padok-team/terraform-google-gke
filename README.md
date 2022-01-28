@@ -12,7 +12,7 @@ Terraform module which creates **Google Kubernetes Engine** resources on **GCP**
 - AASRE I can deploy GKE cluster with a public control plane behind IP whitelisting
 - AASRE I can remove the default Node Pool
 - AASRE I can create my custom Node Pools
-- AASRE I can deploy a GKE cluster and creates some IPs (that I can later use for my LBs' IPs)
+- AASRE I can deploy a GKE cluster and create some IPs (that I can later use for my LBs' IPs)
 
 ## Usage
 
@@ -31,7 +31,7 @@ module "google-gke-cluster" {
 
 - [Example of regional cluster with IP whitelisting on master and one custom node pool](examples/regional_private_cluster)
 - [Example of zonal cluster with two custom node pools](examples/zonal_multiple_node_pool)
-- [Example of cluster with one ip address and one global address ip](examples/cluster_with_ip_address)
+- [Example of cluster with one regional ip address and one global ip address](examples/cluster_with_ip_addresses)
 
 <!-- BEGIN_TF_DOCS -->
 ## Modules
