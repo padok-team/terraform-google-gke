@@ -130,8 +130,8 @@ variable "firewall_webhook_ports" {
 variable "ip_addresses" {
   description = "Map of IP that you need to create (GLOBAL or NOT / EXTERNAL or NOT). Internal purpose must be VPC_PEERING or PRIVATE_SERVICE_CONNECT"
   type = map(object({
-    external = bool
-    global   = bool
+    external         = bool
+    global           = bool
     internal_purpose = optional(string)
   }))
   default = {}

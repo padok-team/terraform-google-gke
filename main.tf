@@ -1,11 +1,15 @@
-data "google_project" "this" {}
+data "google_client_config" "current" {}
+
+locals {
+  google_project = data.google_client_config.current.project
+}
 
 resource "google_container_cluster" "this" {
   provider = google-beta
 
   name           = var.name
   location       = var.location
-  project        = data.google_project.this.project_id
+  project        = local.google_project
   node_locations = var.node_locations
 
   min_master_version = var.min_master_version
@@ -36,7 +40,7 @@ resource "google_container_cluster" "this" {
   # This enables workload identity. For more information:
   # https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity
   workload_identity_config {
-    workload_pool = "${data.google_project.this.project_id}.svc.id.goog"
+    workload_pool = "${local.google_project}.svc.id.goog"
   }
 
   network         = var.network.id
