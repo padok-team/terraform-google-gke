@@ -86,7 +86,7 @@ variable "subnetwork" {
 variable "cidr_master" {
   description = "The CIDR of the subnet ip range to use for the control plane."
   type        = string
-  default     = null
+  default     = "10.168.0.0/28"
 
   validation {
     condition     = can(regex("(^192\\.168\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])$)|(^172\\.([1][6-9]|[2][0-9]|[3][0-1])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])$)|(^10\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])[\\/](([0-9]|[1-2][0-9]|3[0-2]))+$)", var.cidr_master)) || var.cidr_master == null
@@ -128,10 +128,11 @@ variable "firewall_webhook_ports" {
 }
 
 variable "ip_addresses" {
-  description = "Map of IP that you need to create (GLOBAL or NOT / EXTERNAL or NOT)."
+  description = "Map of IP that you need to create (GLOBAL or NOT / EXTERNAL or NOT). Internal purpose must be VPC_PEERING or PRIVATE_SERVICE_CONNECT"
   type = map(object({
     external = bool
     global   = bool
+    internal_purpose = optional(string)
   }))
   default = {}
 }

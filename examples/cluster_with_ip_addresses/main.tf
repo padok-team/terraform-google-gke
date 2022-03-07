@@ -1,14 +1,14 @@
 # Short description of the use case in comments
 
 provider "google" {
-  project = "<YOUR_PROJECT_ID>"
+  project = "padok-cloud-factory"
   region  = "europe-west1"
 }
 
 module "custom_service_account" {
   source = "git@github.com:padok-team/terraform-google-serviceaccount.git"
 
-  list_serviceaccount = {
+  service_accounts = {
     gke-sa = {
       predifined_roles = []
       permissions = [
@@ -25,9 +25,9 @@ module "custom_service_account" {
 }
 
 module "custom_network" {
-  source = "git@github.com:padok-team/terraform-google-network.git"
-  project = "<YOUR_PROJECT_ID>"
-  name = "my-super-duper-cluster-network"
+  source  = "git@github.com:padok-team/terraform-google-network.git"
+  project = "padok-cloud-factory"
+  name    = "my-super-duper-cluster-network"
   subnets = {
     "kubernetes-nodes" = {
       cidr   = "10.21.0.0/16"
@@ -43,7 +43,7 @@ module "ip_address_use_case" {
   location = "europe-west1"
 
   node_service_account = {
-    email = module.custom_service_account.service_account_email["gke-sa"]
+    email = module.custom_service_account.service_account_emails["gke-sa"]
   }
 
   cidr_master = "10.168.0.0/28"
@@ -71,12 +71,12 @@ module "ip_address_use_case" {
   }
 }
 
-output "service_account_output" {
-  value = module.custom_service_account.service_account_email["gke-sa"]
+output "service_account_email" {
+  value = module.custom_service_account.service_account_emails["gke-sa"]
 }
 
 output "this" {
-  value = module.ip_address_use_case.this
+  value     = module.ip_address_use_case.this
   sensitive = true
 }
 

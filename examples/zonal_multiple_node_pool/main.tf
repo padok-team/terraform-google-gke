@@ -25,9 +25,9 @@ module "custom_service_account" {
 }
 
 module "custom_network" {
-  source = "git@github.com:padok-team/terraform-google-network.git"
+  source  = "git@github.com:padok-team/terraform-google-network.git"
   project = "<YOUR_PROJECT_ID>"
-  name = "my-zonal-super-duper-cluster-network"
+  name    = "my-zonal-super-duper-cluster-network"
   subnets = {
     "zonal-kubernetes-nodes" = {
       cidr   = "10.21.0.0/16"

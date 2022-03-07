@@ -36,7 +36,7 @@ resource "google_container_cluster" "this" {
   # This enables workload identity. For more information:
   # https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity
   workload_identity_config {
-    identity_namespace = "${data.google_project.this.project_id}.svc.id.goog"
+    workload_pool = "${data.google_project.this.project_id}.svc.id.goog"
   }
 
   network         = var.network.id
@@ -111,7 +111,7 @@ resource "google_container_node_pool" "this" {
     # This enables workload identity. For more information:
     # https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity
     workload_metadata_config {
-      node_metadata = "GKE_METADATA_SERVER"
+      mode = "GKE_METADATA"
     }
 
     shielded_instance_config {
@@ -126,10 +126,11 @@ resource "google_container_node_pool" "this" {
 }
 
 resource "google_compute_firewall" "allow_webhooks" {
-  name        = "k8s-${var.name}-webhooks"
-  description = "Managed by Terraform: allow GKE master nodes to connect to admission controllers/webhooks."
-  network     = var.network.id
-  direction   = "INGRESS"
+  name          = "k8s-${var.name}-webhooks"
+  description   = "Managed by Terraform: allow GKE master nodes to connect to admission controllers/webhooks."
+  network       = var.network.id
+  direction     = "INGRESS"
+  source_ranges = [var.cidr_master]
 
   allow {
     protocol = "tcp"
@@ -149,6 +150,7 @@ resource "google_compute_global_address" "this" {
   name         = each.key
   address_type = each.value.external ? "EXTERNAL" : "INTERNAL"
   network      = var.network.id
+  purpose      = each.value.external ? null : each.value.internal_purpose
 }
 
 resource "google_compute_address" "this" {
@@ -158,5 +160,5 @@ resource "google_compute_address" "this" {
   }
   name         = each.key
   address_type = each.value.external ? "EXTERNAL" : "INTERNAL"
-  network      = var.network.id
+  network      = each.value.external ? null : var.network.id
 }

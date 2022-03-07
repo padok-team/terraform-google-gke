@@ -46,7 +46,7 @@ No modules.
 | <a name="input_name"></a> [name](#input\_name) | Name of the GKE cluster. | `string` | n/a | yes |
 | <a name="input_network"></a> [network](#input\_network) | The virtual network the cluster's nodes will be connected to. | <pre>object({<br>    id = string<br>  })</pre> | n/a | yes |
 | <a name="input_subnetwork"></a> [subnetwork](#input\_subnetwork) | The subnetwork the cluster's nodes will be connected to. | <pre>object({<br>    id = string<br>  })</pre> | n/a | yes |
-| <a name="input_cidr_master"></a> [cidr\_master](#input\_cidr\_master) | The CIDR of the subnet ip range to use for the control plane. | `string` | `null` | no |
+| <a name="input_cidr_master"></a> [cidr\_master](#input\_cidr\_master) | The CIDR of the subnet ip range to use for the control plane. | `string` | `"10.168.0.0/28"` | no |
 | <a name="input_enable_dataplane_v2"></a> [enable\_dataplane\_v2](#input\_enable\_dataplane\_v2) | Whether to enable Dataplane V2 or not. | `bool` | `true` | no |
 | <a name="input_firewall_webhook_ports"></a> [firewall\_webhook\_ports](#input\_firewall\_webhook\_ports) | Ports to open to allow GKE master nodes to connect to admission controllers/webhooks. | `list(string)` | `[]` | no |
 | <a name="input_ip_addresses"></a> [ip\_addresses](#input\_ip\_addresses) | Map of IP that you need to create (GLOBAL or NOT / EXTERNAL or NOT). | <pre>map(object({<br>    external = bool<br>    global   = bool<br>  }))</pre> | `{}` | no |
