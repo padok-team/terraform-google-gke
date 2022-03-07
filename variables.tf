@@ -87,32 +87,17 @@ variable "cidr_master" {
   description = "The CIDR of the subnet ip range to use for the control plane."
   type        = string
   default     = "10.168.0.0/28"
-
-  validation {
-    condition     = can(regex("(^192\\.168\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])$)|(^172\\.([1][6-9]|[2][0-9]|[3][0-1])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])$)|(^10\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])[\\/](([0-9]|[1-2][0-9]|3[0-2]))+$)", var.cidr_master)) || var.cidr_master == null
-    error_message = "Set to a CIDR notation (e.g. 10.96.0.0/14) from the RFC-1918 private networks (e.g. 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16) to pick a specific range to use."
-  }
 }
 variable "pods_cidr" {
   description = "The CIDR block of the subnet ip range to use for pods."
   type        = string
   default     = null
-
-  validation {
-    condition     = can(regex("(^192\\.168\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])$)|(^172\\.([1][6-9]|[2][0-9]|[3][0-1])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])$)|(^10\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])[\\/](([0-9]|[1-2][0-9]|3[0-2]))+$)", var.pods_cidr)) || var.pods_cidr == null
-    error_message = "Set to a CIDR notation (e.g. 10.96.0.0/14) from the RFC-1918 private networks (e.g. 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16) to pick a specific range to use."
-  }
 }
 
 variable "services_cidr" {
   description = "The cidr of the subnet ip range to use for services"
   type        = string
   default     = null
-
-  validation {
-    condition     = can(regex("(^192\\.168\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])$)|(^172\\.([1][6-9]|[2][0-9]|[3][0-1])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])$)|(^10\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])\\.([0-9]|[0-9][0-9]|[0-2][0-9][0-9])[\\/](([0-9]|[1-2][0-9]|3[0-2]))+$)", var.services_cidr)) || var.services_cidr == null
-    error_message = "Set to a CIDR notation (e.g. 10.96.0.0/14) from the RFC-1918 private networks (e.g. 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16) to pick a specific range to use."
-  }
 }
 
 
