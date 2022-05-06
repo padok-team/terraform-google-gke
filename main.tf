@@ -1,33 +1,33 @@
-data "google_project" "this" {}
+locals {
+  network_tag_webhook = "gke-${var.project_id}-${var.name}"
+  master_version      = data.google_container_engine_versions.this.release_channel_default_version[var.release_channel]
+  is_region           = length(split("-", var.location)) == 2
+}
+
+data "google_container_engine_versions" "this" {
+  project  = var.project_id
+  location = var.location
+}
 
 resource "google_container_cluster" "this" {
-  provider = google-beta
+  name     = var.name
+  location = var.location
+  project  = var.project_id
 
-  name           = var.name
-  location       = var.location
-  project        = data.google_project.this.project_id
-  node_locations = var.node_locations
-
-  min_master_version = var.min_master_version
   release_channel {
-    channel = "STABLE"
+    channel = var.release_channel
   }
 
-  timeouts {
-    create = "45m"
-    update = "45m"
-    delete = "45m"
-  }
+  min_master_version = local.master_version
 
   # We can't create a cluster with no node pool defined, but we want to only use
   # separately managed node pools. So we create the smallest possible default
   # node pool and immediately delete it.
   remove_default_node_pool = true
+  enable_shielded_nodes    = true
   initial_node_count       = 1
-
-  enable_shielded_nodes = true
   node_config {
-    service_account = var.node_service_account.email
+    service_account = google_service_account.node_pool_service_account.email
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
@@ -36,43 +36,46 @@ resource "google_container_cluster" "this" {
   # This enables workload identity. For more information:
   # https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity
   workload_identity_config {
-    identity_namespace = "${data.google_project.this.project_id}.svc.id.goog"
+    workload_pool = "${var.project_id}.svc.id.goog"
   }
 
-  network         = var.network.id
-  subnetwork      = var.subnetwork.id
+  network         = var.network.self_link
+  subnetwork      = var.network.subnet_self_link
   networking_mode = "VPC_NATIVE"
-  ip_allocation_policy {
-    cluster_ipv4_cidr_block  = var.pods_cidr
-    services_ipv4_cidr_block = var.services_cidr
-  }
 
-  network_policy {
-    # Enabling NetworkPolicy for clusters with DatapathProvider=ADVANCED_DATAPATH is not allowed (yields error)
-    enabled = var.enable_dataplane_v2 ? false : true
-    # CALICO provider overrides datapath_provider setting, leaving Dataplane v2 disabled
-    provider = var.enable_dataplane_v2 ? "PROVIDER_UNSPECIFIED" : "CALICO"
+  ip_allocation_policy {
+    cluster_secondary_range_name  = var.network.pods_range_name
+    services_secondary_range_name = var.network.services_range_name
   }
-  # This is where Dataplane V2 is enabled.
-  datapath_provider = var.enable_dataplane_v2 ? "ADVANCED_DATAPATH" : "DATAPATH_PROVIDER_UNSPECIFIED"
 
   # The cluster is private (ie. nodes are not accessible from the Internet).
   # The cluster's API endpoint is public (ie. the cluster can be operated from
   # the Internet).
   private_cluster_config {
     enable_private_nodes    = true
-    enable_private_endpoint = var.private_endpoint
-    master_ipv4_cidr_block  = var.cidr_master
+    enable_private_endpoint = false
+    master_ipv4_cidr_block  = var.network.master_cidr
   }
 
   master_authorized_networks_config {
     dynamic "cidr_blocks" {
-      for_each = var.ips_whitelist_master_network
+      for_each = var.network.master_allowed_ips
       content {
         cidr_block   = cidr_blocks.value.cidr
         display_name = cidr_blocks.value.name
       }
     }
+  }
+
+  # This is where Dataplane V2 is enabled.
+  datapath_provider = "ADVANCED_DATAPATH"
+
+  monitoring_config {
+    enable_components = ["SYSTEM_COMPONENTS"]
+  }
+
+  logging_config {
+    enable_components = ["SYSTEM_COMPONENTS"]
   }
 
   addons_config {
@@ -83,80 +86,121 @@ resource "google_container_cluster" "this" {
       disabled = true
     }
   }
+
+  master_auth {
+    client_certificate_config {
+      issue_client_certificate = false
+    }
+  }
+
+  maintenance_policy {
+    daily_maintenance_window {
+      start_time = var.maintenance_start_time
+    }
+  }
+
+  timeouts {
+    create = "45m"
+    update = "45m"
+    delete = "45m"
+  }
+
+  lifecycle {
+    ignore_changes = [min_master_version, node_config]
+  }
+  depends_on = [google_service_account.node_pool_service_account]
+
 }
 
 resource "google_container_node_pool" "this" {
   for_each = var.node_pools
 
-  name = each.key
+  name    = each.key
+  project = var.project_id
 
   location       = google_container_cluster.this.location
   cluster        = google_container_cluster.this.name
-  node_locations = var.node_locations
+  node_locations = each.value.locations
 
   initial_node_count = each.value.min_size
-
+  management {
+    auto_repair  = true
+    auto_upgrade = true
+  }
   autoscaling {
     min_node_count = each.value.min_size
     max_node_count = each.value.max_size
   }
 
   node_config {
+    image_type   = "COS_CONTAINERD"
     machine_type = each.value.machine_type
 
-    labels = {
-      "padok.fr/nodepool" = each.key
+    labels = each.value.labels
+    dynamic "taint" {
+      for_each = each.value.taints
+      content {
+        effect = taint.value.effect
+        key    = taint.value.key
+        value  = taint.value.val
+      }
+    }
+    tags = [local.network_tag_webhook]
+
+    gcfs_config {
+      enabled = true
     }
 
+    preemptible = each.value.preemptible
+
+    metadata = merge(
+      { "cluster_name" = var.name },
+      { "node_pool" = each.key },
+      { "disable-legacy-endpoints" = true },
+    )
     # This enables workload identity. For more information:
     # https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity
     workload_metadata_config {
-      node_metadata = "GKE_METADATA_SERVER"
+      mode = "GKE_METADATA"
     }
 
     shielded_instance_config {
-      enable_secure_boot = true
+      enable_secure_boot          = true
+      enable_integrity_monitoring = true
     }
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
-    service_account = var.node_service_account.email
+    service_account = google_service_account.node_pool_service_account.email
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
   }
+  lifecycle {
+    ignore_changes = [node_count, version]
+  }
+  timeouts {
+    create = "45m"
+    update = "45m"
+    delete = "45m"
+  }
+  depends_on = [google_container_cluster.this, google_service_account.node_pool_service_account]
 }
 
-resource "google_compute_firewall" "allow_webhooks" {
-  name        = "k8s-${var.name}-webhooks"
-  description = "Managed by Terraform: allow GKE master nodes to connect to admission controllers/webhooks."
-  network     = var.network.id
+data "google_compute_subnetwork" "this" {
+  self_link = "https://www.googleapis.com/compute/v1/${var.network.subnet_self_link}"
+}
+
+resource "google_compute_firewall" "master_webhooks" {
+  name        = "gke-${substr(var.name, 0, min(25, length(var.name)))}-${google_container_cluster.this.project}-webhooks"
+  description = "Managed by terraform gke module: Allow master to hit pods for admission controllers/webhooks"
+  project     = data.google_compute_subnetwork.this.project
+  network     = var.network.self_link
   direction   = "INGRESS"
+
+  source_ranges = [google_container_cluster.this.private_cluster_config[0].master_ipv4_cidr_block]
+  target_tags   = [local.network_tag_webhook]
 
   allow {
     protocol = "tcp"
-    ports = toset(concat([
-      "8080", // Sealed Secrets controller
-      "8443", // NGINX ingress controller admission webhook
-      "8443", // Kyverno webhooks
-    ], var.firewall_webhook_ports))
+    ports    = concat(["8443", "9443", "15017"], var.network.webhook_ports)
   }
-}
-
-resource "google_compute_global_address" "this" {
-  for_each = {
-    for k, v in var.ip_addresses : k => v
-    if v["global"]
-  }
-  name         = each.key
-  address_type = each.value.external ? "EXTERNAL" : "INTERNAL"
-  network      = var.network.id
-}
-
-resource "google_compute_address" "this" {
-  for_each = {
-    for k, v in var.ip_addresses : k => v
-    if !v["global"]
-  }
-  name         = each.key
-  address_type = each.value.external ? "EXTERNAL" : "INTERNAL"
-  network      = var.network.id
 }
