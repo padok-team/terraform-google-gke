@@ -42,28 +42,19 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_location"></a> [location](#input\_location) | Zone or region to deploy the cluster to. | `string` | n/a | yes |
-| <a name="input_name"></a> [name](#input\_name) | Name of the GKE cluster. | `string` | n/a | yes |
-| <a name="input_network"></a> [network](#input\_network) | The virtual network the cluster's nodes will be connected to. | <pre>object({<br>    id = string<br>  })</pre> | n/a | yes |
-| <a name="input_subnetwork"></a> [subnetwork](#input\_subnetwork) | The subnetwork the cluster's nodes will be connected to. | <pre>object({<br>    id = string<br>  })</pre> | n/a | yes |
-| <a name="input_cidr_master"></a> [cidr\_master](#input\_cidr\_master) | The CIDR of the subnet ip range to use for the control plane. | `string` | `null` | no |
-| <a name="input_enable_dataplane_v2"></a> [enable\_dataplane\_v2](#input\_enable\_dataplane\_v2) | Whether to enable Dataplane V2 or not. | `bool` | `true` | no |
-| <a name="input_firewall_webhook_ports"></a> [firewall\_webhook\_ports](#input\_firewall\_webhook\_ports) | Ports to open to allow GKE master nodes to connect to admission controllers/webhooks. | `list(string)` | `[]` | no |
-| <a name="input_ip_addresses"></a> [ip\_addresses](#input\_ip\_addresses) | Map of IP that you need to create (GLOBAL or NOT / EXTERNAL or NOT). | <pre>map(object({<br>    external = bool<br>    global   = bool<br>  }))</pre> | `{}` | no |
-| <a name="input_ips_whitelist_master_network"></a> [ips\_whitelist\_master\_network](#input\_ips\_whitelist\_master\_network) | IP or CIDR whitelisted to access master kubernetes. | <pre>list(object({<br>    name = string<br>    cidr = string<br>  }))</pre> | `[]` | no |
-| <a name="input_min_master_version"></a> [min\_master\_version](#input\_min\_master\_version) | Minimum version for GKE control plane. | `string` | `"1.20"` | no |
-| <a name="input_node_locations"></a> [node\_locations](#input\_node\_locations) | The zones in which your cluster's nodes are located. | `list(string)` | `null` | no |
-| <a name="input_node_pools"></a> [node\_pools](#input\_node\_pools) | Node pools to create and add to the cluster.<br>Use `min_size` and `max_size` to set the pool's size.<br>Use `machine_type` to specify which GCE machine type the pool is made of. | <pre>map(object({<br>    min_size     = number<br>    max_size     = number<br>    machine_type = string<br>    preemptible  = bool<br>  }))</pre> | `{}` | no |
-| <a name="input_node_service_account"></a> [node\_service\_account](#input\_node\_service\_account) | The service account to use for your node identities. | <pre>object({<br>    email = string<br>  })</pre> | <pre>{<br>  "email": null<br>}</pre> | no |
-| <a name="input_pods_cidr"></a> [pods\_cidr](#input\_pods\_cidr) | The CIDR block of the subnet ip range to use for pods. | `string` | `null` | no |
-| <a name="input_private_endpoint"></a> [private\_endpoint](#input\_private\_endpoint) | Whether the kubernetes master endpoint should be private or not. | `bool` | `false` | no |
-| <a name="input_services_cidr"></a> [services\_cidr](#input\_services\_cidr) | The cidr of the subnet ip range to use for services | `string` | `null` | no |
+| <a name="input_location"></a> [location](#input\_location) | The zone or region to deploy the cluster to. It defines if cluster is regional or zonal | `string` | n/a | yes |
+| <a name="input_name"></a> [name](#input\_name) | The name of the GKE cluster. | `string` | n/a | yes |
+| <a name="input_network"></a> [network](#input\_network) | The network parameters used to deploy the resources | <pre>object({<br>    self_link           = string            // The self link for network. It's required for shared VPC.<br>    subnet_self_link    = string            // The self link for subnetwork. It's requirred for shared VPC.<br>    pods_range_name     = string            // The name of pod range created in network.<br>    services_range_name = string            // The name of service range created in network.<br>    master_cidr         = string            // The private ip range to use for control plane. It can not be created in network module.<br>    master_allowed_ips  = list(map(string)) // The ips to whitelist to access master.<br>    webhook_ports       = list(string)      // The ports to open to allow GKE master nodes to connect to admission controllers/webhooks.<br>  })</pre> | n/a | yes |
+| <a name="input_project_id"></a> [project\_id](#input\_project\_id) | The project to deploy the ressrouces to. | `string` | n/a | yes |
+| <a name="input_region"></a> [region](#input\_region) | The region to deploy the cluster to. | `string` | n/a | yes |
+| <a name="input_registry_project_ids"></a> [registry\_project\_ids](#input\_registry\_project\_ids) | The project ids on which registry access will be granted. | `list(string)` | n/a | yes |
+| <a name="input_release_channel"></a> [release\_channel](#input\_release\_channel) | The release channel to look for latest versions on. | `string` | n/a | yes |
+| <a name="input_maintenance_start_time"></a> [maintenance\_start\_time](#input\_maintenance\_start\_time) | Time window specified for daily maintenance operations. Specify start\_time in RFC3339 format 'HH:MM', where HH : [00-23] and MM : [00-59] GMT. | `string` | `"00:00"` | no |
+| <a name="input_node_pools"></a> [node\_pools](#input\_node\_pools) | The node pools to create and add to the cluster. | <pre>map(object({<br>    name         = string<br>    locations    = list(string) // Zones to deploy the nodes into<br>    min_size     = string<br>    max_size     = string<br>    machine_type = string // The GCE machine type the pool is made of.<br>    preemptible  = bool<br>    taints       = list(map(string))<br>    labels       = map(string)<br>  }))</pre> | `{}` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_compute_addresses"></a> [compute\_addresses](#output\_compute\_addresses) | n/a |
-| <a name="output_compute_global_addresses"></a> [compute\_global\_addresses](#output\_compute\_global\_addresses) | n/a |
-| <a name="output_this"></a> [this](#output\_this) | All outputs of the kubernetes cluster. |
+| <a name="output_command_to_connect"></a> [command\_to\_connect](#output\_command\_to\_connect) | The gcloud command to run to connect to the cluster. |
 <!-- END_TF_DOCS -->
