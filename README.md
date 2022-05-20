@@ -21,17 +21,24 @@ module "google-gke-cluster" {
   source     = "https://github.com/padok-team/terraform-google-gke"
 
   name       = var.name
-  location   = var.location
-  network    = var.network
-  subnetwork = var.subnetwork
+  project_id = var.project_id
+
+  region   = var.region
+  location = var.location // Whether the cluster is regional or zonal
+
+  release_channel = var.release_channel // Use latest release on creation
+
+  registry_project_ids = var.registry_project_ids // Used to grant access to the created sa
+
+  network = var.network
+
+  node_pools = var.nod_pools
 }
 ```
 
 ## Examples
 
-- [Example of regional cluster with IP whitelisting on master and one custom node pool](examples/regional_private_cluster)
-- [Example of zonal cluster with two custom node pools](examples/zonal_multiple_node_pool)
-- [Example of cluster with one regional ip address and one global ip address](examples/cluster_with_ip_addresses)
+- [Example of regional cluster with private node and public control plane](examples/public)
 
 <!-- BEGIN_TF_DOCS -->
 ## Modules
