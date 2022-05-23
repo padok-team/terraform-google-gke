@@ -4,7 +4,7 @@ variable "name" {
 }
 
 variable "project_id" {
-  description = "The project to deploy the ressrouces to."
+  description = "The project to deploy the ressources to."
   type        = string
 }
 
@@ -13,14 +13,10 @@ variable "location" {
   type        = string
 }
 
-variable "region" {
-  description = "The region to deploy the cluster to."
-  type        = string
-}
-
 variable "release_channel" {
   description = "The release channel to look for latest versions on."
   type        = string
+  default     = "REGULAR"
 }
 
 variable "registry_project_ids" {
@@ -28,12 +24,23 @@ variable "registry_project_ids" {
   type        = list(string)
 }
 
+variable "logging" {
+  description = "Enables Stackdriver logging for workloads"
+  type        = bool
+  default     = false
+}
+
+variable "monitoring" {
+  description = "Enables Cloud Monitoring for workloads"
+  type        = bool
+  default     = false
+}
 
 variable "network" {
   description = "The network parameters used to deploy the resources"
   type = object({
-    self_link           = string            // The self link for network. It's required for shared VPC.
-    subnet_self_link    = string            // The self link for subnetwork. It's requirred for shared VPC.
+    private             = bool              // Determines if the control plane has a public IP or not.
+    subnet_self_link    = string            // The self link for subnetwork. It's required for shared VPC.
     pods_range_name     = string            // The name of pod range created in network.
     services_range_name = string            // The name of service range created in network.
     master_cidr         = string            // The private ip range to use for control plane. It can not be created in network module.
@@ -41,7 +48,6 @@ variable "network" {
     webhook_ports       = list(string)      // The ports to open to allow GKE master nodes to connect to admission controllers/webhooks.
   })
 }
-
 
 variable "node_pools" {
   description = "The node pools to create and add to the cluster."
