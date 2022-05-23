@@ -1,0 +1,15 @@
+---
+site_name: terraform-google-gke
+
+repo_name: padok-team/terraform-google-gke
+repo_url: https://github.com/padok-team/terraform-google-gke
+
+plugins:
+  - techdocs-core
+  - include-markdown
+
+nav:
+  - Usage:
+    - Standard: 'usage/standard.md'
+    - Private:  'usage/private.md'
+  - Reference: '../README.md'
