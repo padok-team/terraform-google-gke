@@ -20,7 +20,7 @@
 
 ## Example
 
-[Link](../../examples/zonal/main.tf)
+[Link](https://github.com/padok-team/terraform-google-gke/blob/main/examples/zonal/main.tf)
 
 ```terraform
 {%
