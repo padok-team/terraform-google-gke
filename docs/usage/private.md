@@ -24,6 +24,6 @@
 
 ```terraform
 {%
-   include-markdown "../../examples/regional/main.tf"
+   include "../../examples/regional/main.tf"
 %}
 ```
