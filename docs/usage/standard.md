@@ -20,10 +20,10 @@
 
 ## Example
 
-[Link](../examples/zonal/main.tf)
+[Link](../../examples/zonal/main.tf)
 
 ```terraform
 {%
-   include-markdown "../../examples/zonal/main.tf"
+   include "../../examples/zonal/main.tf"
 %}
 ```

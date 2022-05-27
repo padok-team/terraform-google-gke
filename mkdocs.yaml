@@ -12,4 +12,4 @@ nav:
   - Usage:
     - Standard: 'usage/standard.md'
     - Private:  'usage/private.md'
-  - Reference: 'reference.md'
+    - Options:  'usage/options.md'
