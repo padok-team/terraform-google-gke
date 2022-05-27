@@ -7,3 +7,8 @@ output "node_network_tag" {
   description = "If you want to create firewall rules on node pools, use this network tag"
   value       = local.network_tag_webhook
 }
+
+output "workload_identity_pool" {
+  description = "Identity pool for the GKE cluster, used to give access to GCP SA from K8S SA"
+  value = "${var.project_id}.svc.id.goog"
+}
