@@ -1,4 +1,4 @@
-# Standard
+# Private
 
 ## Specifications
 
@@ -20,15 +20,10 @@
 
 ## Example
 
-[Link](./examples/regional/main.tf)
+[Link](../../examples/regional/main.tf)
 
 ```terraform
-<!--start-->
-<!--end-->
-```
-
 {%
-   include-markdown "../examples/regional/main.tf"
-   start="<!--start-->"
-   end="<!--end-->"
+   include-markdown "../../examples/regional/main.tf"
 %}
+```
