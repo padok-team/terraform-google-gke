@@ -33,7 +33,7 @@ resource "google_container_cluster" "this" {
   initial_node_count       = 1
 
   node_config {
-    service_account = google_service_account.node_pool_service_account.email
+    service_account = google_service_account.node.email
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
@@ -115,7 +115,7 @@ resource "google_container_cluster" "this" {
     ignore_changes = [min_master_version, node_config]
   }
 
-  depends_on = [google_service_account.node_pool_service_account]
+  depends_on = [google_service_account.node]
 }
 
 resource "google_container_node_pool" "this" {
@@ -178,7 +178,7 @@ resource "google_container_node_pool" "this" {
     }
 
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
-    service_account = google_service_account.node_pool_service_account.email
+    service_account = google_service_account.node.email
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
@@ -191,7 +191,7 @@ resource "google_container_node_pool" "this" {
     update = "45m"
     delete = "45m"
   }
-  depends_on = [google_container_cluster.this, google_service_account.node_pool_service_account]
+  depends_on = [google_container_cluster.this, google_service_account.node]
 }
 
 resource "google_compute_firewall" "master_webhooks" {
