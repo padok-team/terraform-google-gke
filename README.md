@@ -6,36 +6,6 @@ Terraform module which creates **Google Kubernetes Engine** resources on **GCP**
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-## User Stories for this module
-
-- AASRE I can deploy a GKE cluster with private node
-- AASRE I can deploy GKE cluster with a public control plane behind IP whitelisting
-- AASRE I can remove the default Node Pool
-- AASRE I can create my custom Node Pools
-- AASRE I can deploy a GKE cluster and create some IPs (that I can later use for my LBs' IPs)
-
-## Usage
-
-```terraform
-module "google-gke-cluster" {
-  source     = "https://github.com/padok-team/terraform-google-gke"
-
-  name       = var.name
-  project_id = var.project_id
-
-  region   = var.region
-  location = var.location // Whether the cluster is regional or zonal
-
-  release_channel = var.release_channel // Use latest release on creation
-
-  registry_project_ids = var.registry_project_ids // Used to grant access to the created sa
-
-  network = var.network
-
-  node_pools = var.nod_pools
-}
-```
-
 ## Examples
 
 - [Example of regional cluster with private node and public control plane](examples/public)
