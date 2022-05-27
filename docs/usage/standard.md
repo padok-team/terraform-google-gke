@@ -20,15 +20,10 @@
 
 ## Example
 
-[Link](./examples/zonal/main.tf)
+[Link](../examples/zonal/main.tf)
 
 ```terraform
-<!--start-->
-<!--end-->
-```
-
 {%
-   include-markdown "../examples/zonal/main.tf"
-   start="<!--start-->"
-   end="<!--end-->"
+   include-markdown "../../examples/zonal/main.tf"
 %}
+```
