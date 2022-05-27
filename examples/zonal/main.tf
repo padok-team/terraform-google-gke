@@ -10,7 +10,7 @@ module "kubernetes" {
 
   network = {
     private             = false
-    subnet_self_link    = "projects/padok-playground/regions/europe-north1/subnetworks/test-refacto-kubernetes"
+    subnet_self_link    = "https://www.googleapis.com/compute/v1/projects/padok-playground/regions/europe-north1/subnetworks/test-refacto-kubernetes"
     pods_range_name     = "gke-pods-test"
     services_range_name = "gke-service-test"
     master_cidr         = "192.168.128.0/28"
