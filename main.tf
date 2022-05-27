@@ -6,7 +6,7 @@ locals {
 }
 
 data "google_compute_subnetwork" "this" {
-  self_link = "${local.google_compute_apis_url}${var.network.subnet_self_link}"
+  self_link = var.network.subnet_self_link
 }
 
 data "google_container_engine_versions" "this" {
@@ -46,7 +46,7 @@ resource "google_container_cluster" "this" {
   }
 
   network         = trimprefix(data.google_compute_subnetwork.this.network, local.google_compute_apis_url)
-  subnetwork      = var.network.subnet_self_link
+  subnetwork      = trimprefix(var.network.subnet_self_link, local.google_compute_apis_url)
   networking_mode = "VPC_NATIVE"
 
   ip_allocation_policy {
