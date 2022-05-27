@@ -1,0 +1,17 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: terraform-google-gke
+  description: Terraform module which creates Google Kubernetes Engine resources on GCP.
+  tags:
+    - "terraform"
+    - "google"
+  annotations:
+    github.com/project-slug: padok-team/terraform-google-gke
+    backstage.io/techdocs-ref: dir:.
+spec:
+  type: module
+  system: terraform
+  owner: library-gcp
+  lifecycle: awaiting-feedback
+---
