@@ -9,6 +9,7 @@ plugins:
   - include-markdown
 
 nav:
+  - Reference: index.md
   - Usage:
     - Standard: 'usage/standard.md'
     - Private:  'usage/private.md'
