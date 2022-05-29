@@ -86,10 +86,7 @@ resource "google_container_cluster" "this" {
 
   addons_config {
     http_load_balancing {
-      # Waiting for NEGs to be ready makes Argo think some applications are not
-      # fully deployed even though they are.
-      # We don't use GKE's native HTTP load balancing anyway.
-      disabled = true
+      disabled = false
     }
   }
 
