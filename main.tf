@@ -5,10 +5,6 @@ locals {
   google_compute_apis_url = "https://www.googleapis.com/compute/v1/"
 }
 
-data "google_compute_subnetwork" "this" {
-  self_link = var.network.subnet_self_link
-}
-
 data "google_container_engine_versions" "this" {
   project  = var.project_id
   location = var.location
@@ -45,7 +41,7 @@ resource "google_container_cluster" "this" {
     workload_pool = "${var.project_id}.svc.id.goog"
   }
 
-  network         = trimprefix(data.google_compute_subnetwork.this.network, local.google_compute_apis_url)
+  network         = trimprefix(var.network.network_id, local.google_compute_apis_url)
   subnetwork      = trimprefix(var.network.subnet_self_link, local.google_compute_apis_url)
   networking_mode = "VPC_NATIVE"
 
@@ -65,7 +61,7 @@ resource "google_container_cluster" "this" {
 
   master_authorized_networks_config {
     dynamic "cidr_blocks" {
-      for_each = var.network.private ? concat(var.network.master_allowed_ips, [{ name = "Node Subnet", cidr = tostring(data.google_compute_subnetwork.this.ip_cidr_range) }]) : var.network.master_allowed_ips
+      for_each = var.network.private ? concat(var.network.master_allowed_ips, [{ name = "Node Subnet", cidr = tostring(var.network.ip_cidr_range) }]) : var.network.master_allowed_ips
       content {
         cidr_block   = cidr_blocks.value.cidr
         display_name = cidr_blocks.value.name
@@ -194,8 +190,8 @@ resource "google_container_node_pool" "this" {
 resource "google_compute_firewall" "master_webhooks" {
   name        = "gke-${substr(var.name, 0, min(25, length(var.name)))}-${google_container_cluster.this.project}-webhooks"
   description = "Managed by terraform gke module: Allow master to hit pods for admission controllers/webhooks"
-  project     = data.google_compute_subnetwork.this.project
-  network     = trimprefix(data.google_compute_subnetwork.this.network, local.google_compute_apis_url)
+  project     = var.project_id
+  network     = trimprefix(var.network.network_id, local.google_compute_apis_url)
   direction   = "INGRESS"
 
   source_ranges = [google_container_cluster.this.private_cluster_config[0].master_ipv4_cidr_block]

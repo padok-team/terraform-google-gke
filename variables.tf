@@ -45,6 +45,8 @@ variable "network" {
     services_range_name = string            // The name of service range created in network.
     master_cidr         = string            // The private ip range to use for control plane. It can not be created in network module.
     master_allowed_ips  = list(map(string)) // The ips to whitelist to access master.
+    network_id          = string            // The network name or resource link to the parent network of this subnetwork
+    network_ip_cidr_range = string          //The IP address range that machines in this network are assigned to, represented as a CIDR block.
     webhook_ports       = list(string)      // The ports to open to allow GKE master nodes to connect to admission controllers/webhooks.
   })
 }
