@@ -18,9 +18,9 @@ No modules.
 | <a name="input_registry_project_ids"></a> [registry\_project\_ids](#input\_registry\_project\_ids) | The project ids on which registry access will be granted. | `list(string)` | n/a | yes |
 | <a name="input_logging"></a> [logging](#input\_logging) | Enables Stackdriver logging for workloads | `bool` | `false` | no |
 | <a name="input_maintenance_start_time"></a> [maintenance\_start\_time](#input\_maintenance\_start\_time) | Time window specified for daily maintenance operations. Specify start\_time in RFC3339 format 'HH:MM', where HH : [00-23] and MM : [00-59] GMT. | `string` | `"00:00"` | no |
-| <a name="input_monitoring"></a> [monitoring](#input\_monitoring) | Enables Cloud Monitoring for workloads | `bool` | `false` | no |
 | <a name="input_node_pools"></a> [node\_pools](#input\_node\_pools) | The node pools to create and add to the cluster. | <pre>map(object({<br>    name         = string<br>    locations    = list(string) // Zones to deploy the nodes into<br>    min_size     = string<br>    max_size     = string<br>    machine_type = string // The GCE machine type the pool is made of.<br>    preemptible  = bool<br>    taints       = list(map(string))<br>    labels       = map(string)<br>  }))</pre> | `{}` | no |
 | <a name="input_release_channel"></a> [release\_channel](#input\_release\_channel) | The release channel to look for latest versions on. | `string` | `"REGULAR"` | no |
+| <a name="input_workload_identity_pool"></a> [workload\_identity\_pool](#input\_workload\_identity\_pool) | Custom workload identity pool to be used, default will be the project default one | `string` | `""` | no |
 
 ## Outputs
 
