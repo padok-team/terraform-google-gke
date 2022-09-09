@@ -3,6 +3,7 @@ locals {
   master_version          = data.google_container_engine_versions.this.release_channel_default_version[var.release_channel]
   is_region               = length(split("-", var.location)) == 2
   google_compute_apis_url = "https://www.googleapis.com/compute/v1/"
+  workload_identity_pool  = var.workload_identity_pool != "" ? var.workload_identity_pool : "${var.project_id}.svc.id.goog"
 }
 
 data "google_compute_subnetwork" "this" {
@@ -42,7 +43,7 @@ resource "google_container_cluster" "this" {
   # This enables workload identity. For more information:
   # https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity
   workload_identity_config {
-    workload_pool = "${var.project_id}.svc.id.goog"
+    workload_pool = local.workload_identity_pool
   }
 
   network         = trimprefix(data.google_compute_subnetwork.this.network, local.google_compute_apis_url)

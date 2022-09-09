@@ -63,3 +63,9 @@ variable "maintenance_start_time" {
   type        = string
   default     = "00:00"
 }
+
+variable "workload_identity_pool" {
+  description = "Custom workload identity pool to be used, default will be the project default one"
+  type        = string
+  default     = ""
+}
