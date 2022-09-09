@@ -30,12 +30,6 @@ variable "logging" {
   default     = false
 }
 
-variable "monitoring" {
-  description = "Enables Cloud Monitoring for workloads"
-  type        = bool
-  default     = false
-}
-
 variable "network" {
   description = "The network parameters used to deploy the resources"
   type = object({
