@@ -77,7 +77,7 @@ resource "google_container_cluster" "this" {
   datapath_provider = "ADVANCED_DATAPATH"
 
   monitoring_config {
-    enable_components = var.monitoring ? ["SYSTEM_COMPONENTS", "WORKLOADS"] : ["SYSTEM_COMPONENTS"]
+    enable_components = ["SYSTEM_COMPONENTS"]
   }
 
   logging_config {
