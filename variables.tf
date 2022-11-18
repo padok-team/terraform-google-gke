@@ -69,3 +69,9 @@ variable "workload_identity_pool" {
   type        = string
   default     = ""
 }
+
+variable "kms_key_id" {
+  description = "KMS Key ID to encrypt Boot disk and etcd of GKE"
+  type        = string
+  default     = ""
+}

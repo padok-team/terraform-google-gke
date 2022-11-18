@@ -4,15 +4,7 @@ locals {
   is_region               = length(split("-", var.location)) == 2
   google_compute_apis_url = "https://www.googleapis.com/compute/v1/"
   workload_identity_pool  = var.workload_identity_pool != "" ? var.workload_identity_pool : "${var.project_id}.svc.id.goog"
-}
-
-data "google_compute_subnetwork" "this" {
-  self_link = var.network.subnet_self_link
-}
-
-data "google_container_engine_versions" "this" {
-  project  = var.project_id
-  location = var.location
+  kms_key                 = var.kms_key_id != "" ? var.kms_key_id : google_kms_crypto_key.this.id
 }
 
 resource "google_container_cluster" "this" {
@@ -74,6 +66,11 @@ resource "google_container_cluster" "this" {
     }
   }
 
+  database_encryption {
+    state    = "ENCRYPTED"
+    key_name = local.kms_key
+  }
+
   # This is where Dataplane V2 is enabled.
   datapath_provider = "ADVANCED_DATAPATH"
 
@@ -113,7 +110,11 @@ resource "google_container_cluster" "this" {
     ignore_changes = [min_master_version, node_config]
   }
 
-  depends_on = [google_service_account.node]
+  depends_on = [
+    google_service_account.node,
+    google_kms_crypto_key_iam_member.container_crypto_key,
+    google_project_iam_member.compute_crypto
+  ]
 }
 
 resource "google_container_node_pool" "this" {
@@ -139,11 +140,12 @@ resource "google_container_node_pool" "this" {
   node_locations     = each.value.locations
 
   node_config {
-    image_type   = "COS_CONTAINERD"
-    machine_type = each.value.machine_type
-    preemptible  = each.value.preemptible
-    labels       = each.value.labels
-    tags         = [local.network_tag_webhook]
+    image_type        = "COS_CONTAINERD"
+    machine_type      = each.value.machine_type
+    preemptible       = each.value.preemptible
+    labels            = each.value.labels
+    tags              = [local.network_tag_webhook]
+    boot_disk_kms_key = local.kms_key
 
     dynamic "taint" {
       for_each = each.value.taints
@@ -207,3 +209,4 @@ resource "google_compute_firewall" "master_webhooks" {
     ports    = concat(["8443", "9443", "15017"], var.network.webhook_ports)
   }
 }
+

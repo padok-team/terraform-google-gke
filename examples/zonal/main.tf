@@ -1,16 +1,16 @@
 module "kubernetes" {
   source = "../.."
 
-  name       = "zonal"
-  project_id = "library-344516"
+  name       = "zonaltest"
+  project_id = "padok-cloud-factory"
 
-  location = "europe-west1-b"
+  location = "europe-west3-a"
 
   registry_project_ids = ["padok-playground"] // Used to grant access to the created sa
 
   network = {
     private             = false
-    subnet_self_link    = "https://www.googleapis.com/compute/v1/projects/library-344516/regions/europe-west1/subnetworks/eu"
+    subnet_self_link    = "https://www.googleapis.com/compute/v1/projects/padok-cloud-factory/regions/europe-west3/subnetworks/my-private-subnet-1"
     pods_range_name     = "gke-pods-main"
     services_range_name = "gke-services-main"
     master_cidr         = "192.168.128.0/28"
@@ -21,7 +21,7 @@ module "kubernetes" {
   node_pools = {
     main = {
       name         = "classy-node-pool"
-      locations    = ["europe-west1-b"]
+      locations    = ["europe-west3-a"]
       min_size     = 1
       max_size     = 2
       machine_type = "e2-micro"
