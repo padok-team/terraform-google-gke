@@ -41,3 +41,5 @@ resource "google_project_iam_member" "node_artifact_registry" {
   role     = "roles/artifactregistry.reader"
   member   = "serviceAccount:${google_service_account.node.email}"
 }
+
+
