@@ -1,5 +1,17 @@
 # Changelog
 
+## [4.0.0](https://github.com/padok-team/terraform-google-gke/compare/v3.1.0...v4.0.0) (2022-12-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* **encryption:** activate encryption by default, this will recreate your clusters
+
+### Features
+
+* **encryption:** activate encryption by default, this will recreate your clusters ([0c86d7b](https://github.com/padok-team/terraform-google-gke/commit/0c86d7b51d60eead7e32d6fbb76fe155a2fea309))
+* **kms:** encrypt gke boot disk and etcd with kms ([c77c4d5](https://github.com/padok-team/terraform-google-gke/commit/c77c4d553d25fff8dff052f2b8904bf436662409))
+
 ## [3.1.0](https://github.com/padok-team/terraform-google-gke/compare/v3.0.1...v3.1.0) (2022-09-09)
 
 
