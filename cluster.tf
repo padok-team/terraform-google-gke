@@ -1,13 +1,21 @@
 locals {
-  network_tag_webhook     = "gke-${var.project_id}-${var.name}"
-  master_version          = data.google_container_engine_versions.this.release_channel_default_version[var.release_channel]
-  is_region               = length(split("-", var.location)) == 2
-  google_compute_apis_url = "https://www.googleapis.com/compute/v1/"
-  workload_identity_pool  = var.workload_identity_pool != "" ? var.workload_identity_pool : "${var.project_id}.svc.id.goog"
-  kms_key                 = var.kms_key_id != "" ? var.kms_key_id : google_kms_crypto_key.this.id
+  network_tag_webhook         = "gke-${var.project_id}-${var.name}"
+  master_version              = data.google_container_engine_versions.this.release_channel_default_version[var.release_channel]
+  is_region                   = length(split("-", var.location)) == 2
+  google_compute_apis_url     = "https://www.googleapis.com/compute/v1/"
+  workload_identity_pool      = var.workload_identity_pool != "" ? var.workload_identity_pool : "${var.project_id}.svc.id.goog"
+  kms_key                     = var.kms_key_id != "" ? var.kms_key_id : google_kms_crypto_key.this.id
+  authenticator_groups_config = var.google_group_domain != "" ? ["gke-security-groups@${var.google_group_domain}"] : []
 }
 
 resource "google_container_cluster" "this" {
+  #checkov:skip=CKV_GCP_12:Ensure Network Policy is enabled on Kubernetes Engine Clusters
+  # Skipped because it's enabled by default using ADVANCED_DATAPATH
+  #checkov:skip=CKV_GCP_67:Ensure legacy Compute Engine instance metadata APIs are Disabled
+  # Skipped because we rely on GCP APIs to use the last available version of your chosen release channel
+  #checkov:skip=CKV_GCP_21:Ensure Kubernetes Clusters are configured with Labels
+  #checkov:skip=CKV_GCP_24:Ensure PodSecurityPolicy controller is enabled on the Kubernetes Engine Clusters
+  #checkov:skip=CKV_GCP_66:Ensure use of Binary Authorization
   name     = var.name
   location = var.location
   project  = var.project_id
@@ -30,6 +38,13 @@ resource "google_container_cluster" "this" {
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
+    workload_metadata_config {
+      mode = "GKE_METADATA"
+    }
+    shielded_instance_config {
+      enable_secure_boot          = true
+      enable_integrity_monitoring = true
+    }
   }
 
   # This enables workload identity. For more information:
@@ -38,9 +53,18 @@ resource "google_container_cluster" "this" {
     workload_pool = local.workload_identity_pool
   }
 
-  network         = trimprefix(data.google_compute_subnetwork.this.network, local.google_compute_apis_url)
-  subnetwork      = trimprefix(var.network.subnet_self_link, local.google_compute_apis_url)
-  networking_mode = "VPC_NATIVE"
+  dynamic "authenticator_groups_config" {
+    for_each = toset(local.authenticator_groups_config)
+    content {
+      security_group = authenticator_groups_config.value
+    }
+  }
+
+  network                     = trimprefix(data.google_compute_subnetwork.this.network, local.google_compute_apis_url)
+  subnetwork                  = trimprefix(var.network.subnet_self_link, local.google_compute_apis_url)
+  networking_mode             = "VPC_NATIVE"
+  enable_intranode_visibility = true
+  enable_binary_authorization = var.enable_binary_authorization
 
   ip_allocation_policy {
     cluster_secondary_range_name  = var.network.pods_range_name

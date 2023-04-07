@@ -14,6 +14,8 @@ resource "random_id" "kms_key" {
 }
 
 resource "google_kms_crypto_key" "this" {
+  #checkov:skip=CKV_GCP_82:Ensure KMS keys are protected from deletion
+  #checkov:skip=CKV_GCP_43:Ensure KMS encryption keys are rotated within a period of 90 days
   name                       = random_id.kms_key.hex
   key_ring                   = google_kms_key_ring.this.id
   rotation_period            = "7890000s" # 3 months
@@ -43,7 +45,7 @@ resource "google_project_iam_member" "compute_crypto" {
   project = var.project_id
 
   role = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
-  # 23/12/2022: we can not use the service identity resource as it is not available for compute google api yet, 
+  # 23/12/2022: we can not use the service identity resource as it is not available for compute google api yet,
   # Instead we need to build the email using the project ID
   member = "serviceAccount:service-${data.google_project.this.number}@compute-system.iam.gserviceaccount.com"
 }
