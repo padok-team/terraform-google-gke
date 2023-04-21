@@ -58,6 +58,18 @@ variable "node_pools" {
   default = {}
 }
 
+variable "google_group_domain" {
+  description = "The domain to use for authenticator groups. This is useful if you want to make RBAC access through Google workspace groups see https://cloud.google.com/kubernetes-engine/docs/how-to/google-groups-rbac"
+  type        = string
+  default     = ""
+}
+
+variable "enable_binary_authorization" {
+  description = "Enables Binary Authorization for workloads"
+  type        = bool
+  default     = false
+}
+
 variable "maintenance_start_time" {
   description = "Time window specified for daily maintenance operations. Specify start_time in RFC3339 format 'HH:MM', where HH : [00-23] and MM : [00-59] GMT."
   type        = string
