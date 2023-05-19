@@ -1,16 +1,24 @@
+provider "google" {
+  region = "europe-west1"
+}
+
+provider "google-beta" {
+  region = "europe-west1"
+}
+
 module "kubernetes" {
   source = "../.."
 
   name       = "regional"
-  project_id = "padok-playground"
+  project_id = "padok-lab"
 
-  location = "europe-north1"
+  location = "europe-west1"
 
-  registry_project_ids = ["padok-playground"] // Used to grant access to the created sa
+  registry_project_ids = ["padok-lab"] // Used to grant access to the created sa
 
   network = {
     private             = true
-    subnet_self_link    = "https://www.googleapis.com/compute/v1/projects/padok-playground/regions/europe-north1/subnetworks/test-refacto-kubernetes"
+    subnet_self_link    = "https://www.googleapis.com/compute/v1/projects/padok-lab/regions/europe-west1/subnetworks/subnet-staging-1"
     pods_range_name     = "gke-pods-test"
     services_range_name = "gke-service-test"
     master_cidr         = "192.168.128.0/28"
@@ -21,7 +29,7 @@ module "kubernetes" {
   node_pools = {
     main = {
       name         = "classy-node-pool"
-      locations    = ["europe-north1-b"]
+      locations    = ["europe-west1-b"]
       min_size     = 1
       max_size     = 2
       machine_type = "e2-micro"
