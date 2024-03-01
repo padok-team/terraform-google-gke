@@ -110,6 +110,9 @@ resource "google_container_cluster" "this" {
     http_load_balancing {
       disabled = false
     }
+    gcs_fuse_csi_driver_config {
+      enabled = var.enable_gcs_fuse_csi_driver
+    }
   }
 
   master_auth {

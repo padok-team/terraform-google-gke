@@ -70,6 +70,12 @@ variable "enable_binary_authorization" {
   default     = false
 }
 
+variable "enable_gcs_fuse_csi_driver" {
+  description = "Enables the GCS FUSE CSI driver GKE addon"
+  type        = bool
+  default     = false
+}
+
 variable "maintenance_start_time" {
   description = "Time window specified for daily maintenance operations. Specify start_time in RFC3339 format 'HH:MM', where HH : [00-23] and MM : [00-59] GMT."
   type        = string
