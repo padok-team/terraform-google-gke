@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.0](https://github.com/padok-team/terraform-google-gke/compare/v4.0.0...v4.1.0) (2024-03-01)
+
+
+### Features
+
+* **addons:** add support for the GCS FUSE CSI driver addon ([d796541](https://github.com/padok-team/terraform-google-gke/commit/d796541649a46118ebb8eeb989546cf6e6da90e2))
+
 ## [4.0.0](https://github.com/padok-team/terraform-google-gke/compare/v3.1.0...v4.0.0) (2022-12-23)
 
 
