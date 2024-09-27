@@ -1,6 +1,7 @@
 
 module "vpc" {
   #checkov:skip=CKV2_GCP_18: firewalls will be managed elsewhere
+  #checkov:skip=CKV_TF_1: we do not need to pin a commit hash in examples
   source  = "terraform-google-modules/network/google"
   version = "9.2.0"
 
