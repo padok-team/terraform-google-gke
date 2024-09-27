@@ -1,24 +1,50 @@
-provider "google" {
-  region = "europe-west1"
-}
 
-provider "google-beta" {
-  region = "europe-west1"
+module "vpc" {
+  #checkov:skip=CKV2_GCP_18: firewalls will be managed elsewhere
+  #checkov:skip=CKV_TF_1: we do not need to pin a commit hash in examples
+  source  = "terraform-google-modules/network/google"
+  version = "9.2.0"
+
+  project_id = "library-344516"
+
+  network_name = "gke-regionaltest"
+  routing_mode = "GLOBAL"
+  subnets = [
+    {
+      subnet_name   = "subnet-01"
+      subnet_ip     = "172.17.24.0/21"
+      subnet_region = "europe-west1"
+    },
+  ]
+  secondary_ranges = {
+    subnet-01 = [
+      {
+        range_name    = "gke-pods-main"
+        ip_cidr_range = "10.4.0.0/14"
+      },
+      {
+        range_name    = "gke-services-main"
+        ip_cidr_range = "192.168.2.0/23"
+      },
+    ]
+  }
+  auto_create_subnetworks = false
+  mtu                     = 0
 }
 
 module "kubernetes" {
   source = "../.."
 
   name       = "regional"
-  project_id = "padok-lab"
+  project_id = "library-344516"
 
   location = "europe-west1"
 
-  registry_project_ids = ["padok-lab"] // Used to grant access to the created sa
+  registry_project_ids = ["library-344516"] // Used to grant access to the created sa
 
   network = {
     private             = true
-    subnet_self_link    = "https://www.googleapis.com/compute/v1/projects/padok-lab/regions/europe-west1/subnetworks/subnet-staging-1"
+    subnet_self_link    = module.vpc.subnets_self_links[0]
     pods_range_name     = "gke-pods-test"
     services_range_name = "gke-service-test"
     master_cidr         = "192.168.128.0/28"
