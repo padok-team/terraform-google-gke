@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.2.0](https://github.com/padok-team/terraform-google-gke/compare/v4.1.0...v4.2.0) (2024-12-13)
+
+
+### Features
+
+* **terratest:** add terratest and test CI ([4991715](https://github.com/padok-team/terraform-google-gke/commit/49917152d60d9ab023557e694cded6595208d219))
+
+
+### Bug Fixes
+
+* **example:** pin version error ([b2ad6a9](https://github.com/padok-team/terraform-google-gke/commit/b2ad6a913047e7c96c9960b9ad7d453c2836dbfd))
+* **examples:** network not exists ([36b1216](https://github.com/padok-team/terraform-google-gke/commit/36b12168c22d508bfdaad235ccdaf70df7fd183a))
+
 ## [4.1.0](https://github.com/padok-team/terraform-google-gke/compare/v4.0.0...v4.1.0) (2024-03-01)
 
 
