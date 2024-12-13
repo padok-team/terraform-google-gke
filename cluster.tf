@@ -64,7 +64,6 @@ resource "google_container_cluster" "this" {
   subnetwork                  = trimprefix(var.network.subnet_self_link, local.google_compute_apis_url)
   networking_mode             = "VPC_NATIVE"
   enable_intranode_visibility = true
-  enable_binary_authorization = var.enable_binary_authorization
 
   ip_allocation_policy {
     cluster_secondary_range_name  = var.network.pods_range_name

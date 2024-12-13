@@ -64,12 +64,6 @@ variable "google_group_domain" {
   default     = ""
 }
 
-variable "enable_binary_authorization" {
-  description = "Enables Binary Authorization for workloads"
-  type        = bool
-  default     = false
-}
-
 variable "enable_gcs_fuse_csi_driver" {
   description = "Enables the GCS FUSE CSI driver GKE addon"
   type        = bool
