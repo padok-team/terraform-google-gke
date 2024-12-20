@@ -5,4 +5,4 @@ on:
 name: terraform-quality
 jobs:
   terraform-quality:
-    uses: padok-team/github-workflows/.github/workflows/terraform-quality.yml@v1
+    uses: padok-team/github-workflows/.github/workflows/terraform-quality.yml@52754e5c28abe4fa35cf9b872a04b04526c0a63b # v1
